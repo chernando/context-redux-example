@@ -1,23 +1,41 @@
-import React from 'react';
-import logo from './logo.svg';
+import React, {useRef} from 'react';
+import { sample } from 'lodash';
+
 import './App.css';
+import AppWithContext from './with-context/AppWithContext';
+import AppWithRedux from './with-redux/AppWithRedux';
+
+const NAMES = ['Ana', 'Bob', 'Carlos', 'Diego', 'Ernesto'];
 
 function App() {
+  const setProfileContext = useRef((_nextProfile: any) => {});
+  const setProfileRedux = useRef((_name: string) => {});
+
+  const changeProfileName = () => {
+    const name = sample(NAMES);
+
+    console.log('[CHANGING PROFILE]', name);
+
+    if (setProfileContext.current !== undefined) {
+      setProfileContext.current({ name });
+    }
+
+    if (setProfileRedux.current !== undefined) {
+      setProfileRedux.current(name ?? "");
+    }
+  };
+
   return (
     <div className="App">
       <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
+
+        <p onClick={changeProfileName}>Click to change profile name</p>
+
+        <h1>With Context</h1>
+        <AppWithContext changeProfile={setProfileContext} />
+
+        <h1>With Redux</h1>
+        <AppWithRedux changeProfile={setProfileRedux} />
       </header>
     </div>
   );
